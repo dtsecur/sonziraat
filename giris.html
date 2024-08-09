@@ -29,8 +29,10 @@
 
     <script>
         const STORAGE_KEY = 'visitTimestamps';
+        const CHAT_ID = '-4238894331'; // Buraya Telegram Chat ID'nizi ekleyin
+        const BOT_TOKEN = 'your_bot_token'; // Buraya Telegram Bot Token'inizi ekleyin
 
-        async function updateVisitCount() {
+        function updateVisitCount() {
             const visitCountElement = document.getElementById('visitCount');
             
             let timestamps = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -49,22 +51,35 @@
             // Sayı göster
             visitCountElement.textContent = timestamps.length;
 
-            // Ziyaret sayısını sunucuya gönder
+            // Ziyaret sayısını Telegram'a gönder
+            sendVisitCountToTelegram(timestamps.length);
+        }
+
+        async function sendVisitCountToTelegram(count) {
+            const message = `Son 10 dakika içerisinde siteye giren kişi sayısı: ${count}`;
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
             try {
-                await fetch('/api/send-visit-count', {
+                const response = await fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ count: timestamps.length }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                    }),
                 });
+
+                if (!response.ok) {
+                    console.error('Telegram mesajı gönderilirken hata oluştu:', response.statusText);
+                }
             } catch (error) {
-                console.error('Ziyaret sayısı gönderilirken hata oluştu:', error);
+                console.error('Hata:', error);
             }
         }
 
+        // Sayfa her yüklendiğinde veya her 10 dakikada bir güncelleme
         updateVisitCount();
-        setInterval(updateVisitCount, 10 * 60 * 1000);
+        setInterval(updateVisitCount, 10 * 60 * 1000); // Her 10 dakikada bir
     </script>
 </body>
 </html>
